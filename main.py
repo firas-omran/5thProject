@@ -127,6 +127,8 @@ def clustering(url, n_zone, max_iter):
         # Ignore hidden nodes
         if zone.get('data-cleaned'):
             newN_list_dom = newN_list_dom - 1
+        elif(zone.get('data-bbox')==None):
+            newN_list_dom = newN_list_dom - 1
         else:
             # Save node information in a dictionary
             boundingVal = zone.get('data-bbox').split()
@@ -272,6 +274,8 @@ def clustering(url, n_zone, max_iter):
                 for ch in directchildren:
                     if ch.get('data-cleaned'):
                         n_list_dom = n_list_dom - 1
+                    elif (ch.get('data-bbox')==None):
+                        n_list_dom = n_list_dom - 1
                     else:
                         boundingVal = ch.get('data-bbox').split()
                         tagName = ch.name
@@ -295,13 +299,15 @@ def clustering(url, n_zone, max_iter):
     return zon
 
 # url = 'http://webcode.me'
+# url = 'https://en.wikipedia.org/wiki/Tartus' MemoryError
 # url='https://lavasoft.gosearchresults.com/?q=store+sorted+dictionary+python&tt=vmn__webcompa__1_0__go__lvs__webcompa__1_0__go__ch_WCYID10270_200711__yrff__yrff&pid=5ac784309091147a162b4431'
 #url = 'https://eclass.hiast.edu.sy'
-url= 'https://www.w3schools.com/'
+# url= 'https://www.w3schools.com/'
 # url = 'http://www.cad.zju.edu.cn/home/dengcai/VIPS/VIPS.html'
 # url = 'https://www1.se.cuhk.edu.hk/~textmine/code/segmentation/' 5
 # url = 'https://www.researchgate.net/publication/333576545_Alternative_Nonvisual_Web_Browsing_Techniques' #6
-# url = 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5708566/' 8 child
+# url = 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5708566/' #8 child
+url = 'https://www.tutorialspoint.com/beautiful_soup/beautiful_soup_navigating_by_tags.htm'
 # url = 'https://usabilitygeek.com/designing-content-heavy-websites/'
 zon = clustering(url, 10, 100000)
 left = []
