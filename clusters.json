@@ -36,7 +36,7 @@
         "yCentre": "233.0",
         "text": "Search results for: store sorted dictionary python (33,000,000 results)\nHow to sort a dictionary in Python? - Tutorialspoint\nwww.tutorialspoint.com/how-to-sort-a-dictionary-in-python\n\n\n\n\n\n\n\t\tWe use the sorted () and items () methods together to sort the dictionary by value. The items () is used to retrieve the items or values of the dictionary. The key=lambda x: x [1] is a sorting mechanism that uses a lambda function. This gives us key value pairs ehich are then converted into a dictionary using dict ().\n",
         "seg": "false",
-        "xPath": "/html/body/div[1]/div[2]/div[1]/div[2]/html/body/div[1]/div[2]/div[1]/ul/li[1]"
+        "xPath ": "/html/body/div[1]/div[2]/div[1]/div[2]/html/body/div[1]/div[2]/div[1]/ul/li[1]"
     },
     {
         "tagName": "lili",

@@ -330,4 +330,3 @@ for i in range(0, len(zon)):
         height.append(zon[i][i]['height'])
 
 driver.execute_script(open("drawborder.js").read(), left, top, width, height)
-
