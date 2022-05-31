@@ -1,10 +1,15 @@
 import math
+import os
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import sys
 import json
+from selenium.webdriver.firefox.options import Options
 
-driver = webdriver.Firefox()
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options)
 
 
 # Find the largest nodes in the dictionary list
@@ -154,7 +159,6 @@ def clustering(url, n_zone, max_iter):
             tagSpa.append(tSpace)
     n_list_dom = newN_list_dom
     newtagSpa = []
-
     ##################################################
     def segmentation():
         global tagSpa, newtagSpa, n_list_dom
@@ -304,29 +308,32 @@ def clustering(url, n_zone, max_iter):
     zon = segmentation()
     return zon
 
-
 zon = clustering(sys.argv[0], sys.argv[1], sys.argv[2])
-
-# convert directory to json file
-directory_json = []
+id_web_page = sys.argv[3]
+with open('C:/Users/firas/Desktop/project/data/webis-webseg-20-ground-truth/' + id_web_page + '/ground-truth.json',
+          'r') as f:
+    ground_data = json.load(f)
+height_web_page = ground_data['height']
+width_web_page = ground_data['width']
+list_coordinates = []
 for node in range(0, len(zon)):
     if zon[node][node]['tagName'] != "":
-        directory_json.append(zon[node][node])
+        x = zon[node][node]['x']
+        y = zon[node][node]['y']
+        width = zon[node][node]['width']
+        height = zon[node][node]['height']
+        list_coordinates.append([[[[x, y],[x, y + height], [x + width, y + height], [x + width, y], [x, y]]]])
 
-json_object = json.dumps(directory_json, indent=4)
-with open("clusters.json", "w") as outfile:
-    outfile.write(json_object)
-
-# draw border
-left = []
-top = []
-width = []
-height = []
-for i in range(0, len(zon)):
-    if zon[i][i]['tagName'] != "":
-        left.append(zon[i][i]['x'])
-        top.append(zon[i][i]['y'])
-        width.append(zon[i][i]['width'])
-        height.append(zon[i][i]['height'])
-
-driver.execute_script(open("drawborder.js").read(), left, top, width, height)
+dictionary_j = {
+    "id": id_web_page,
+    "height": height_web_page,
+    "width": width_web_page,
+    "segmentations": {
+        "FBO": list_coordinates
+    }
+}
+path_segmentation = r'C:\Users\firas\Desktop\segmentations\\' + id_web_page
+if not os.path.exists(path_segmentation):
+    os.makedirs(path_segmentation)
+with open(path_segmentation + "\seg.json", "w") as outfile:
+    json.dump(dictionary_j, outfile)

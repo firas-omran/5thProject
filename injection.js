@@ -47,7 +47,7 @@ for(var i = 0; i<nodes.length; i++)
     ////////////////Cleaning///////////////////////////
     var checkspace = nodes[i].getAttribute("data-bbox").split(" ");
     var checkcss = nodes[i].getAttribute("data-style").toLowerCase();
-    if(checkspace[4]==0 || checkcss.includes("display:none")|| checkcss.includes("visibility:hidden")|| checkcss.includes("hidden:true"))
+    if(checkspace[4]==0 || checkcss.includes("display:none")|| checkcss.includes("visibility:hidden")|| checkcss.includes("hidden:true") || checkspace[0]<0 ||checkspace[1]<0)
     {
         var attclean = document.createAttribute("data-cleaned");
         attclean.value = "true";
