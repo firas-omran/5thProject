@@ -16,6 +16,6 @@ url='http://03online.com/news/uzi_golovnogo_mozga/2014-10-13-40881'
 import sys
 script_descriptor = open("clustering.py")
 a_script = script_descriptor.read()
-sys.argv = [url, 10, 100000,'000002']
+sys.argv = [url, 10, 100000,'000000']
 exec(a_script)
 script_descriptor.close()
