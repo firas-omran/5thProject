@@ -9,7 +9,8 @@ from selenium.webdriver.firefox.options import Options
 
 options = Options()
 options.headless = True
-driver = webdriver.Firefox(options=options)
+#options=options
+driver = webdriver.Firefox()
 
 
 # Find the largest nodes in the dictionary list
@@ -106,7 +107,14 @@ def find_farthest_nodes(elements, index):
 
 
 def clustering(url, n_zone, max_iter):
-    driver.get(url)
+    try:
+        driver.get(url)
+    except:
+        global error
+        error = 1
+        file_error = open("C:/Users/firas/Desktop/error.txt", "a")
+        file_error.write(sys.argv[3] + '\n')
+        print("page not found " + sys.argv[3])
     # injection Dimensions, css and filter hidden nodes
     driver.execute_script(open("injection.js").read())
     # injection path
@@ -128,11 +136,18 @@ def clustering(url, n_zone, max_iter):
                 p_tage.extract()
     global n_list_dom, newtagSpa, tagSpa
     # Take the direct children of the body
-    zones = soup.find("body").findChildren(recursive=False)
+    zones = []
+    try:
+        zones = soup.find("body").findChildren(recursive=False)
+
+    except:
+        error = 1
+        file_error = open("C:/Users/firas/Desktop/error.txt", "a")
+        file_error.write(sys.argv[3] + '\n')
+        print("page not found " + sys.argv[3])
     n_list_dom = len(zones)
     newN_list_dom = n_list_dom
     tagSpa = []
-
     for zone in zones:
         # Ignore hidden nodes
         if zone.get('data-cleaned'):
@@ -159,6 +174,7 @@ def clustering(url, n_zone, max_iter):
             tagSpa.append(tSpace)
     n_list_dom = newN_list_dom
     newtagSpa = []
+
     ##################################################
     def segmentation():
         global tagSpa, newtagSpa, n_list_dom
@@ -308,32 +324,38 @@ def clustering(url, n_zone, max_iter):
     zon = segmentation()
     return zon
 
-zon = clustering(sys.argv[0], sys.argv[1], sys.argv[2])
-id_web_page = sys.argv[3]
-with open('C:/Users/firas/Desktop/project/data/webis-webseg-20-ground-truth/' + id_web_page + '/ground-truth.json',
-          'r') as f:
-    ground_data = json.load(f)
-height_web_page = ground_data['height']
-width_web_page = ground_data['width']
-list_coordinates = []
-for node in range(0, len(zon)):
-    if zon[node][node]['tagName'] != "":
-        x = zon[node][node]['x']
-        y = zon[node][node]['y']
-        width = zon[node][node]['width']
-        height = zon[node][node]['height']
-        list_coordinates.append([[[[x, y],[x, y + height], [x + width, y + height], [x + width, y], [x, y]]]])
 
-dictionary_j = {
-    "id": id_web_page,
-    "height": height_web_page,
-    "width": width_web_page,
-    "segmentations": {
-        "FBO": list_coordinates
+global error
+error = 0
+zon = clustering(sys.argv[0], sys.argv[1], sys.argv[2])
+driver.close()
+driver.quit()
+if error == 0:
+    id_web_page = sys.argv[3]
+    with open('C:/Users/firas/Desktop/project/data/webis-webseg-20-ground-truth/' + id_web_page + '/ground-truth.json',
+              'r') as f:
+        ground_data = json.load(f)
+    height_web_page = ground_data['height']
+    width_web_page = ground_data['width']
+    list_coordinates = []
+    for node in range(0, len(zon)):
+        if zon[node][node]['tagName'] != "":
+            x = zon[node][node]['x']
+            y = zon[node][node]['y']
+            width = zon[node][node]['width']
+            height = zon[node][node]['height']
+            list_coordinates.append([[[[x, y], [x, y + height], [x + width, y + height], [x + width, y], [x, y]]]])
+
+    dictionary_j = {
+        "id": id_web_page,
+        "height": height_web_page,
+        "width": width_web_page,
+        "segmentations": {
+            "FBO": list_coordinates
+        }
     }
-}
-path_segmentation = r'C:\Users\firas\Desktop\segmentations\\' + id_web_page
-if not os.path.exists(path_segmentation):
-    os.makedirs(path_segmentation)
-with open(path_segmentation + "\seg.json", "w") as outfile:
-    json.dump(dictionary_j, outfile)
+    path_segmentation = r'C:\Users\firas\Desktop\segmentations\\' + id_web_page
+    if not os.path.exists(path_segmentation):
+        os.makedirs(path_segmentation)
+    with open(path_segmentation + "\clusters.json", "w") as outfile:
+        json.dump(dictionary_j, outfile)
